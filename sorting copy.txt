@@ -1,0 +1,95 @@
+fun split [ ] = ([ ], [ ])
+  | split [x] = ([ ], [x])
+  | split (x::y::L) = 
+           let 
+              val (A, B) = split L 
+           in 
+             (x::A, y::B) 
+           end
+
+
+fun merge ( [], B) = B
+  | merge ( A, []) = A
+  | merge (x::A, y::B)= case Int.compare(x,y) of
+                           LESS=>x::merge (A, y::B)
+                         | EQUAL=>x::merge(A,B)
+                         | GREATER=> y::merge(x::A,B)  
+
+
+fun msort []= []
+  | msort [x]=[x]
+  | msort L=
+        let 
+           val (A,B)=split L 
+        in
+           merge ( msort A, msort B)
+        end
+
+
+
+fun toint (a,b,c,d,e,f,g)=
+  let 
+     val n=a*729+b*243+c*81+d*27+e*9+f*3+g
+  in 
+     n
+  end
+
+fun convert n=
+    let
+      val c= n mod 3
+      val b1= n div 3
+      val b2= b1 mod 3
+      val a =b1 div 3
+      val a2=a mod 3
+      val d1= a div 3
+      val d2=d1 mod 3
+      val e1=d1 div 3
+      val e2=e1 mod 3
+      val f2=e1 div 3
+      val g2=f2 mod 3
+      val g3=f2 div 3
+    in
+      (g3,g2,e2,d2,a2,b2,c) 
+    end
+
+
+
+(*will need to account for (point,( weight, touching, not touching )) *)
+
+
+
+fun sort L=
+  let
+    val  L'= map (fn (p,(w,i,o))=> ((toint p),w,i,o) ) L 
+    val  L''=msort L'
+    val  ret= map (fn n=> convert n) L''
+   in
+     ret
+   end
+
+
+
+val
+testlist=[(0,1,2,2,1,0,1),(0,0,0,0,1,1,1),(0,1,2,2,1,0,1),(2,2,2,2,2,2,2),(0,0,0,0,0,0,0)]
+
+val test2=sort testlist 
+
+fun printlist [] =()
+  | printlist((a,b,c,d,e,f,g)::L)=
+    let val first="("^Int.toString(a)^","^Int.toString(b)^","^
+    Int.toString(c)^","^Int.toString(d)^","^Int.toString(e)^","^
+    Int.toString(f)^","^Int.toString(g)^")"^","
+      val ()=print first 
+      val ()=print"\n"
+    in
+      printlist L
+    end 
+
+
+
+ val ()=printlist test2
+
+val () =print" test 2 \n"
+val w=[(0,2,2,2,2,2,2),(0,2,2,2,2,2,2),(0,0,0,1,1,1,1),(0,1,1,1,1,2,1)]
+val w2=sort w
+val ()=printlist w2
